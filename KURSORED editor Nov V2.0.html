@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Cursor Editor V2.0</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+html, body { width: 100%; height: 100%; }
+body { background: #1e1e1e; color: #fff; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; overflow: hidden; }
+header { background: #2d2d30; padding: 12px 24px; border-bottom: 2px solid #3e3e42; height: 60px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
+h1 { font-size: 20px; font-weight: 400; }
+.badge { color: #858585; font-size: 13px; }
+.main { display: flex; flex: 1; min-height: 0; }
+.side { width: 320px; background: #252526; padding: 14px; display: flex; flex-direction: column; gap: 10px; border-right: 2px solid #3e3e42; overflow-y: auto; }
+.title { font-size: 11px; text-transform: uppercase; color: #858585; font-weight: 600; margin-bottom: 4px; }
+.btn { background: #007acc; color: #fff; border: none; padding: 9px 10px; font-size: 13px; border-radius: 4px; cursor: pointer; font-weight: 500; text-align: center; }
+.btn:hover { background: #0098ff; }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.sec { background: #4e4e50; }
+.sec:hover { background: #616163; }
+.ok { background: #28a745; }
+.ok:hover { background: #218838; }
+.dan { background: #a31515; }
+.dan:hover { background: #cd1a1a; }
+.row { display: flex; gap: 8px; }
+.row > * { flex: 1; }
+.input { background: #1e1e1e; border: 1px solid #3e3e42; color: #fff; padding: 7px 9px; border-radius: 4px; font-size: 13px; width: 100%; }
+.input:focus { outline: 1px solid #007acc; }
+.chk { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #ccc; }
+.chk input { width: 16px; height: 16px; accent-color: #007acc; cursor: pointer; }
+.work { flex: 1; display: flex; justify-content: center; align-items: center; background: #1e1e1e; overflow: auto; padding: 20px; min-width: 0; min-height: 0; }
+.gc { background: #2d2d2d; padding: 10px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+.grid { display: grid; gap: 1px; background: #3f3f46; }
+.px { background: #252526; cursor: crosshair; }
+.px:hover { filter: brightness(1.3); }
+input[type=color] { width: 42px; height: 42px; border-radius: 8px; border: 2px solid #fff; cursor: pointer; background: none; }
+.st { font-size: 12px; color: #858585; }
+.st.ok { color: #4caf50; }
+.st.err { color: #e53935; }
+.divider { height: 1px; background: #3e3e42; margin: 2px 0; }
+.codearea { font-family: Consolas, monospace; font-size: 11px; resize: vertical; min-height: 50px; max-height: 80px; }
+label.btn { display: inline-block; margin: 0; cursor: pointer; }
+</style>
+</head>
+<body>
+<header>
+<h1>🎨 Cursor Editor <span class="badge">V2.0</span></h1>
+<div class="badge" id="resLabel">—</div>
+</header>
+<div class="main">
+<div class="side">
+<div>
+<div class="title">1. Разрешение окна</div>
+<select class="input" id="presetRes" style="margin-bottom:6px;">
+<option value="">— пресет —</option>
+<option value="1280x720">1280 × 720</option>
+<option value="1366x768">1366 × 768</option>
+<option value="1440x900" selected>1440 × 900</option>
+<option value="1600x900">1600 × 900</option>
+<option value="1920x1080">1920 × 1080</option>
+</select>
+<div class="row" style="margin-bottom:6px;">
+<input class="input" id="customW" type="number" placeholder="Ширина" min="800" max="3840">
+<input class="input" id="customH" type="number" placeholder="Высота" min="600" max="2160">
+</div>
+<div class="chk"><input type="checkbox" id="autoRes"><label for="autoRes">Авто-определение разрешения</label></div>
+<button class="btn sec" id="btnApplyRes" style="width:100%; margin-top:6px;">Применить разрешение</button>
+</div>
+<div class="divider"></div>
+<div>
+<div class="title">2. Цвет и инструменты</div>
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+<input type="color" id="colorPicker" value="#ffffff">
+<span style="font-size:13px;color:#aaa;">Цвет</span>
+</div>
+<div class="row" style="margin-bottom:8px;">
+<button class="btn" id="toolDraw">✏️ Карандаш</button>
+<button class="btn sec" id="toolErase">🧽 Ластик</button>
+</div>
+<div class="row" style="margin-bottom:8px;">
+<button class="btn sec" id="toolFill" title="Заливка">🪣 Заливка</button>
+<label class="btn sec" title="Загрузить картинку">🖼️ Фото<input type="file" id="fileImg" accept="image/*" style="display:none;"></label>
+</div>
+<div class="row">
+<button class="btn sec" id="btnUndo" title="Ctrl+Z">↶ Назад</button>
+<button class="btn sec" id="btnRedo" title="Ctrl+Y">↷ Вернуть</button>
+</div>
+<div class="st" id="imgStatus" style="margin-top:4px;"></div>
+</div>
+<div class="divider"></div>
+<div>
+<div class="title">3. Шаблон</div>
+<button class="btn sec" id="btnTemplate" style="width:100%;margin-bottom:8px;">Загрузить стрелку Win10</button>
+<button class="btn dan" id="btnClear" style="width:100%;">Очистить всё (Delete)</button>
+</div>
+<div class="divider"></div>
+<div>
+<div class="title">4. Уникальный код</div>
+<button class="btn sec" id="btnGenCode" style="width:100%;margin-bottom:6px;">🔑 Создать уникальный код</button>
+<textarea class="input codearea" id="codeField" placeholder="Вставь сюда код..."></textarea>
+<div class="row" style="margin-top:6px;">
+<button class="btn" id="btnLoadCode">Загрузить по коду</button>
+<button class="btn sec" id="btnCopyCode">Копировать</button>
+</div>
+<div class="st" id="codeStatus" style="margin-top:4px;"></div>
+<div class="row" style="margin-top:8px;">
+<button class="btn ok" id="btnSaveKur">💾 Скачать .kur</button>
+<label class="btn sec">📂 Загрузить .kur<input type="file" id="fileKur" accept=".kur,application/json" style="display:none;"></label>
+</div>
+</div>
+<div style="margin-top:auto;display:flex;flex-direction:column;gap:8px;">
+<div class="divider"></div>
+<div class="title">5. Система</div>
+<button class="btn ok" id="btnApply" style="font-size:15px;padding:13px;">✨ ПРИМЕНИТЬ (Ctrl+S)</button>
+<button class="btn sec" id="btnReset">🖥️ Как в системе (Ctrl+R)</button>
+<div class="st" id="serverStatus">Сервер: проверка...</div>
+</div>
+</div>
+<div class="work" id="workspace">
+<div class="gc"><div class="grid" id="pixelGrid"></div></div>
+</div>
+</div>
+<script>
+(function(){
+'use strict';
+
+var N = 32;
+var MAX = 100;
+var LS = 'cursor_editor_v2';
+
+var $ = function(id){ return document.getElementById(id); };
+var gridEl = $('pixelGrid');
+var workEl = $('workspace');
+var colorEl = $('colorPicker');
+var toolDraw = $('toolDraw');
+var toolErase = $('toolErase');
+var toolFill = $('toolFill');
+var fileImg = $('fileImg');
+var imgStatus = $('imgStatus');
+var btnUndo = $('btnUndo');
+var btnRedo = $('btnRedo');
+var btnClear = $('btnClear');
+var btnTemplate = $('btnTemplate');
+var btnApply = $('btnApply');
+var btnReset = $('btnReset');
+var btnApplyRes = $('btnApplyRes');
+var presetRes = $('presetRes');
+var customW = $('customW');
+var customH = $('customH');
+var autoRes = $('autoRes');
+var resLabel = $('resLabel');
+var btnGenCode = $('btnGenCode');
+var btnLoadCode = $('btnLoadCode');
+var btnCopyCode = $('btnCopyCode');
+var codeField = $('codeField');
+var codeStatus = $('codeStatus');
+var serverStatus = $('serverStatus');
+var btnSaveKur = $('btnSaveKur');
+var fileKur = $('fileKur');
+
+var data = [];
+var tool = 'draw';
+var drawing = false;
+var lr = -1, lc = -1;
+var hist = [];
+var redo = [];
+
+for (var r0 = 0; r0 < N; r0++) {
+    var row0 = [];
+    for (var c0 = 0; c0 < N; c0++) row0.push(null);
+    data.push(row0);
+}
+
+function snap() {
+    var g = [];
+    for (var r = 0; r < N; r++) g.push(data[r].slice());
+    return g;
+}
+function push() {
+    hist.push(snap());
+    if (hist.length > MAX) hist.shift();
+    redo = [];
+    updBtns();
+}
+function undo() {
+    if (!hist.length) return;
+    redo.push(snap());
+    data = hist.pop();
+    render();
+    updBtns();
+    save();
+}
+function redoFn() {
+    if (!redo.length) return;
+    hist.push(snap());
+    data = redo.pop();
+    render();
+    updBtns();
+    save();
+}
+function updBtns() {
+    btnUndo.disabled = hist.length === 0;
+    btnRedo.disabled = redo.length === 0;
+}
+function cellSize() {
+    var w = workEl.clientWidth || 600;
+    var h = workEl.clientHeight || 600;
+    var s = Math.floor(Math.min((w - 60) / N, (h - 60) / N));
+    if (s < 10) s = 10;
+    if (s > 24) s = 24;
+    return s;
+}
+function render() {
+    var s = cellSize();
+    gridEl.style.gridTemplateColumns = 'repeat(' + N + ', ' + s + 'px)';
+    gridEl.style.gridTemplateRows = 'repeat(' + N + ', ' + s + 'px)';
+    gridEl.innerHTML = '';
+    var frag = document.createDocumentFragment();
+    for (var r = 0; r < N; r++) {
+        for (var c = 0; c < N; c++) {
+            var el = document.createElement('div');
+            el.className = 'px';
+            el.style.width = s + 'px';
+            el.style.height = s + 'px';
+            el.style.backgroundColor = data[r][c] || '#252526';
+            el.dataset.r = r;
+            el.dataset.c = c;
+            frag.appendChild(el);
+        }
+    }
+    gridEl.appendChild(frag);
+}
+function setPx(r, c) {
+    if (r < 0 || c < 0 || r >= N || c >= N) return;
+    var v = (tool === 'draw') ? colorEl.value : null;
+    if (data[r][c] === v) return;
+    data[r][c] = v;
+    var idx = r * N + c;
+    var el = gridEl.children[idx];
+    if (el) el.style.backgroundColor = v || '#252526';
+}
+function line(r0, c0, r1, c1) {
+    var dr = Math.abs(r1 - r0), dc = Math.abs(c1 - c0);
+    var sr = r0 < r1 ? 1 : -1, sc = c0 < c1 ? 1 : -1;
+    var err = dr - dc;
+    while (true) {
+        setPx(r0, c0);
+        if (r0 === r1 && c0 === c1) break;
+        var e2 = 2 * err;
+        if (e2 > -dc) { err -= dc; r0 += sr; }
+        if (e2 < dr) { err += dr; c0 += sc; }
+    }
+}
+function getCell(x, y) {
+    var rect = gridEl.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return null;
+    if (x < rect.left || y < rect.top || x >= rect.right || y >= rect.bottom) return null;
+    var c = Math.floor((x - rect.left) / (rect.width / N));
+    var r = Math.floor((y - rect.top) / (rect.height / N));
+    if (r < 0) r = 0;
+    if (c < 0) c = 0;
+    if (r >= N) r = N - 1;
+    if (c >= N) c = N - 1;
+    return { r: r, c: c };
+}
+
+// --- ЗАЛИВКА (BFS) ---
+function floodFill(startR, startC) {
+    var targetColor = data[startR][startC];
+    var newColor = (tool === 'fill') ? colorEl.value : null;
+    
+    if (targetColor === newColor) return;
+    
+    var queue = [{r: startR, c: startC}];
+    data[startR][startC] = newColor;
+    
+    var count = 0;
+    while (queue.length > 0 && count < 5000) {
+        var p = queue.shift();
+        var neighbors = [
+            {r: p.r - 1, c: p.c},
+            {r: p.r + 1, c: p.c},
+            {r: p.r, c: p.c - 1},
+            {r: p.r, c: p.c + 1}
+        ];
+        for (var i = 0; i < neighbors.length; i++) {
+            var n = neighbors[i];
+            if (n.r >= 0 && n.r < N && n.c >= 0 && n.c < N && data[n.r][n.c] === targetColor) {
+                data[n.r][n.c] = newColor;
+                queue.push(n);
+            }
+        }
+        count++;
+    }
+}
+
+gridEl.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    var p = getCell(e.clientX, e.clientY);
+    if (!p) return;
+    
+    if (tool === 'fill') {
+        push();
+        floodFill(p.r, p.c);
+        render();
+        save();
+        return;
+    }
+    
+    drawing = true;
+    lr = p.r; lc = p.c;
+    push();
+    setPx(p.r, p.c);
+});
+document.addEventListener('mousemove', function(e) {
+    if (!drawing) return;
+    var p = getCell(e.clientX, e.clientY);
+    if (!p) return;
+    line(lr, lc, p.r, p.c);
+    lr = p.r; lc = p.c;
+});
+document.addEventListener('mouseup', function() {
+    if (drawing) { drawing = false; save(); }
+});
+
+function setTool(t) {
+    tool = t;
+    var isDraw = (t === 'draw');
+    var isErase = (t === 'erase');
+    var isFill = (t === 'fill');
+    
+    toolDraw.style.background = isDraw ? '#007acc' : '#4e4e50';
+    toolErase.style.background = isErase ? '#007acc' : '#4e4e50';
+    toolFill.style.background = isFill ? '#007acc' : '#4e4e50';
+}
+
+toolDraw.onclick = function() { setTool('draw'); };
+toolErase.onclick = function() { setTool('erase'); };
+toolFill.onclick = function() { setTool('fill'); };
+
+// --- ЗАГРУЗКА ФОТО ---
+fileImg.onchange = function(ev) {
+    var f = ev.target.files && ev.target.files[0];
+    if (!f) return;
+    imgStatus.textContent = 'Обработка фото...';
+    imgStatus.className = 'st';
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+            push();
+            var tmp = document.createElement('canvas');
+            tmp.width = N;
+            tmp.height = N;
+            var ctx = tmp.getContext('2d');
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            
+            // Вписываем картинку в квадрат N x N с сохранением пропорций (по центру)
+            var scale = Math.min(N / img.width, N / img.height);
+            var w = img.width * scale;
+            var h = img.height * scale;
+            var x = (N - w) / 2;
+            var y = (N - h) / 2;
+            
+            // Очищаем (прозрачный фон по умолчанию)
+            ctx.clearRect(0, 0, N, N);
+            ctx.drawImage(img, x, y, w, h);
+            
+            var imgData = ctx.getImageData(0, 0, N, N).data;
+            
+            for (var r = 0; r < N; r++) {
+                for (var c = 0; c < N; c++) {
+                    var i = (r * N + c) * 4;
+                    var a = imgData[i + 3];
+                    if (a < 128) {
+                        data[r][c] = null; // прозрачный пиксель
+                    } else {
+                        var hex = '#' +
+                            ('0' + imgData[i]).slice(-2) +
+                            ('0' + imgData[i+1]).slice(-2) +
+                            ('0' + imgData[i+2]).slice(-2);
+                        data[r][c] = hex;
+                    }
+                }
+            }
+            
+            render();
+            save();
+            imgStatus.textContent = 'Фото загружено и сжато до 32×32!';
+            imgStatus.className = 'st ok';
+        };
+        img.onerror = function() {
+            imgStatus.textContent = 'Ошибка при чтении картинки';
+            imgStatus.className = 'st err';
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(f);
+    ev.target.value = ''; // Сброс, чтобы можно было загрузить ту же картинку снова
+};
+
+btnUndo.onclick = undo;
+btnRedo.onclick = redoFn;
+btnClear.onclick = function() {
+    push();
+    for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) data[r][c] = null;
+    render();
+    save();
+};
+btnTemplate.onclick = function() {
+    push();
+    for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) data[r][c] = null;
+    var rows = [
+        [1],[1,1],[1,1,1],[1,1,1,1],[1,1,1,1,1],[1,1,1,1,1,1],[1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1],[1,1,1,1,1,1,1],[1,1,1,1,1,1,1],[1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1],[1,1,1,1,1,1,1]
+    ];
+    var offR = 2, offC = 2;
+    for (var rr = 0; rr < rows.length; rr++) {
+        for (var cc = 0; cc < rows[rr].length; cc++) {
+            var R = offR + rr, C = offC + cc;
+            if (R < N && C < N) data[R][C] = '#ffffff';
+        }
+    }
+    for (var r = 0; r < N; r++) {
+        for (var c = 0; c < N; c++) {
+            if (data[r][c] === '#ffffff') {
+                var nb = [[-1,0],[1,0],[0,-1],[0,1]];
+                for (var k = 0; k < 4; k++) {
+                    var nr = r + nb[k][0], nc = c + nb[k][1];
+                    if (nr>=0 && nc>=0 && nr<N && nc<N && !data[nr][nc]) data[nr][nc] = '#000000';
+                }
+            }
+        }
+    }
+    render();
+    save();
+};
+
+function setServer(text, cls) {
+    serverStatus.textContent = text;
+    serverStatus.className = 'st ' + (cls || '');
+}
+btnApply.onclick = function() {
+    var flat = [];
+    for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) flat.push(data[r][c]);
+    fetch('http://localhost:8080/apply', { method: 'POST', body: flat.join(',') })
+        .then(function() { setServer('Курсор применён!', 'ok'); })
+        .catch(function() { setServer('Ошибка: сервер не запущен?', 'err'); });
+};
+btnReset.onclick = function() {
+    fetch('http://localhost:8080/reset')
+        .then(function() { setServer('Курсор сброшен', 'ok'); })
+        .catch(function() { setServer('Ошибка: сервер не запущен?', 'err'); });
+};
+
+function applyRes(w, h) {
+    document.body.style.width = w + 'px';
+    document.body.style.height = h + 'px';
+    document.body.style.margin = '0 auto';
+    resLabel.textContent = w + ' × ' + h;
+    setTimeout(render, 0);
+}
+btnApplyRes.onclick = function() {
+    if (autoRes.checked) { applyRes(window.screen.width, window.screen.height); return; }
+    var w = parseInt(customW.value), h = parseInt(customH.value);
+    if (!w || !h) {
+        var p = (presetRes.value || '1440x900').split('x');
+        w = +p[0]; h = +p[1];
+    }
+    applyRes(w, h);
+};
+presetRes.onchange = function() {
+    if (!presetRes.value) return;
+    var p = presetRes.value.split('x');
+    customW.value = p[0]; customH.value = p[1];
+    if (!autoRes.checked) applyRes(+p[0], +p[1]);
+};
+autoRes.onchange = function() {
+    if (autoRes.checked) {
+        customW.disabled = true; customH.disabled = true; presetRes.disabled = true;
+        applyRes(window.screen.width, window.screen.height);
+    } else {
+        customW.disabled = false; customH.disabled = false; presetRes.disabled = false;
+    }
+};
+function rleEnc() {
+    var bytes = [];
+    for (var r = 0; r < N; r++) {
+        for (var c = 0; c < N; c++) {
+            var v = data[r][c];
+            if (!v) bytes.push(0);
+            else if (v === '#000000') bytes.push(1);
+            else if (v === '#ffffff') bytes.push(2);
+            else {
+                bytes.push(3);
+                var n = parseInt(v.slice(1), 16);
+                bytes.push((n>>16)&255, (n>>8)&255, n&255);
+            }
+        }
+    }
+    var rle = [];
+    var i = 0;
+    while (i < bytes.length) {
+        var b = bytes[i], run = 1;
+        while (i+run < bytes.length && bytes[i+run] === b && run < 255) run++;
+        rle.push(run, b);
+        i += run;
+    }
+    return rle;
+}
+function rleDec(rle) {
+    var bytes = [];
+    for (var i = 0; i < rle.length; i += 2) {
+        var run = rle[i], b = rle[i+1];
+        for (var k = 0; k < run; k++) bytes.push(b);
+    }
+    var grid = [];
+    var p = 0;
+    for (var r = 0; r < N; r++) {
+        var row = [];
+        for (var c = 0; c < N; c++) {
+            var b = bytes[p++];
+            if (b === 0) row.push(null);
+            else if (b === 1) row.push('#000000');
+            else if (b === 2) row.push('#ffffff');
+            else if (b === 3) {
+                var R = bytes[p++], G = bytes[p++], B = bytes[p++];
+                row.push('#' + [R,G,B].map(function(x){ return x.toString(16).padStart(2,'0'); }).join(''));
+            } else row.push(null);
+        }
+        grid.push(row);
+    }
+    return grid;
+}
+function chk(str) {
+    var h = 0;
+    for (var i = 0; i < str.length; i++) h = (h*31 + str.charCodeAt(i)) | 0;
+    return (h >>> 0).toString(36);
+}
+function toB64(bytes) {
+    var s = '';
+    for (var i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+    return btoa(s);
+}
+function fromB64(b64) {
+    var s = atob(b64);
+    var arr = new Uint8Array(s.length);
+    for (var i = 0; i < s.length; i++) arr[i] = s.charCodeAt(i);
+    return Array.prototype.slice.call(arr);
+}
+btnGenCode.onclick = function() {
+    var b64 = toB64(rleEnc());
+    codeField.value = 'CUR2-' + b64 + '-' + chk(b64);
+    codeStatus.textContent = 'Код создан. Скопируй и поделись!';
+    codeStatus.className = 'st ok';
+};
+btnLoadCode.onclick = function() {
+    var raw = (codeField.value || '').trim();
+    if (!raw) return;
+    var m = raw.match(/^CUR2-(.+)-([a-z0-9]+)$/);
+    if (!m) { codeStatus.textContent = 'Неверный формат кода'; codeStatus.className = 'st err'; return; }
+    if (chk(m[1]) !== m[2]) { codeStatus.textContent = 'Контрольная сумма не совпадает'; codeStatus.className = 'st err'; return; }
+    try {
+        var grid = rleDec(fromB64(m[1]));
+        push();
+        data = grid;
+        render();
+        save();
+        codeStatus.textContent = 'Курсор загружен по коду!';
+        codeStatus.className = 'st ok';
+    } catch (e) {
+        codeStatus.textContent = 'Ошибка декодирования';
+        codeStatus.className = 'st err';
+    }
+};
+btnCopyCode.onclick = function() {
+    if (!codeField.value) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(codeField.value).then(function() {
+            codeStatus.textContent = 'Скопировано';
+            codeStatus.className = 'st ok';
+        }).catch(function() {
+            codeField.select(); document.execCommand('copy');
+        });
+    } else {
+        codeField.select(); document.execCommand('copy');
+        codeStatus.textContent = 'Скопировано';
+        codeStatus.className = 'st ok';
+    }
+};
+function buildKur() {
+    return JSON.stringify({
+        magic: 'KUR1',
+        app: 'CursorEditorWin10',
+        version: 2,
+        grid: N,
+        createdAt: new Date().toISOString(),
+        pixels: data
+    }, null, 2);
+}
+btnSaveKur.onclick = function() {
+    var blob = new Blob([buildKur()], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    var name = 'cursor_' + new Date().toISOString().replace(/[:.]/g,'-').slice(0,19);
+    a.download = name + '.kur';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+    codeStatus.textContent = 'Файл .kur скачан!';
+    codeStatus.className = 'st ok';
+};
+fileKur.onchange = function(ev) {
+    var f = ev.target.files && ev.target.files[0];
+    if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function() {
+        try {
+            var obj = JSON.parse(reader.result);
+            if (obj.magic !== 'KUR1' || obj.app !== 'CursorEditorWin10') throw new Error('Не .kur файл');
+            if (obj.grid !== N || !Array.isArray(obj.pixels) || obj.pixels.length !== N) throw new Error('Неверный размер');
+            push();
+            data = obj.pixels;
+            render();
+            save();
+            codeStatus.textContent = 'Файл .kur загружен!';
+            codeStatus.className = 'st ok';
+        } catch (e) {
+            codeStatus.textContent = 'Ошибка .kur: ' + e.message;
+            codeStatus.className = 'st err';
+        }
+        ev.target.value = '';
+    };
+    reader.readAsText(f);
+};
+document.addEventListener('keydown', function(e) {
+    var ctrl = e.ctrlKey || e.metaKey;
+    var k = (e.key || '').toLowerCase();
+    var tag = (e.target && e.target.tagName || '').toLowerCase();
+    var inField = (tag === 'input' || tag === 'textarea' || tag === 'select');
+    if (ctrl && !e.shiftKey && k === 'z') { e.preventDefault(); undo(); return; }
+    if (ctrl && (k === 'y' || (e.shiftKey && k === 'z'))) { e.preventDefault(); redoFn(); return; }
+    if ((k === 'delete' || k === 'backspace') && !inField) {
+        e.preventDefault();
+        push();
+        for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) data[r][c] = null;
+        render();
+        save();
+        return;
+    }
+    if (ctrl && k === 's') { e.preventDefault(); btnApply.click(); }
+    if (ctrl && k === 'r') { e.preventDefault(); btnReset.click(); }
+});
+function save() {
+    try {
+        localStorage.setItem(LS, JSON.stringify({
+            d: data, w: document.body.style.width, h: document.body.style.height
+        }));
+    } catch(e) {}
+}
+function load() {
+    try {
+        var raw = localStorage.getItem(LS);
+        if (!raw) return false;
+        var s = JSON.parse(raw);
+        if (Array.isArray(s.d) && s.d.length === N) data = s.d;
+        if (s.w && s.h) { document.body.style.width = s.w; document.body.style.height = s.h; resLabel.textContent = s.w + ' × ' + s.h; }
+        return true;
+    } catch(e) { return false; }
+}
+window.addEventListener('resize', function() {
+    if (autoRes.checked) applyRes(window.screen.width, window.screen.height);
+    else render();
+});
+var had = load();
+if (!had || !document.body.style.width) applyRes(1440, 900);
+else render();
+setTool('draw');
+updBtns();
+fetch('http://localhost:8080/reset', { method: 'GET', mode: 'no-cors' })
+    .then(function() { setServer('Сервер: OK', 'ok'); })
+    .catch(function() { setServer('Сервер: не запущен', 'err'); });
+setInterval(save, 5000);
+})();
+</script>
+</body>
+</html>

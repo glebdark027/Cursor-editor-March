@@ -1,34 +1,204 @@
+# 🎨 Редактор Курсора Windows 10 — V2.0
+
+RUS LANGUAGE - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ПОЖАЛУЙСТА ДАЖЕ ЕСЛИ ВАМ ЛЕНЬ, ПРОЧИТАЙТЕ ЭТУ ИНСТРУКЦИЮ ДО КОНЦА, ТУТ МНОГО НЮАНСОВ КОТОРЫЕ ВАМ НУЖНО ЗНАТЬ ПЕРЕД ИСПОЛЬЗОВАНИЕМ.
 
-КАК ЗАПУСТИТЬ ПРОГРАММУ И ВКЛЮЧИТЬ КУРСОР
+## ЧТО НОВОГО В V2.0
+
+- ↶ **Кнопка «Назад» (Undo)** и ↷ **«Вернуть» (Redo)** — отмена/повтор действий рисования.
+- ⌨️ **Горячие клавиши**: `Ctrl+Z` (назад), `Ctrl+Y` / `Ctrl+Shift+Z` (вернуть), `Ctrl+S` (применить глобально), `Ctrl+R` (сброс к системному курсору).
+- 🖥️ **Выбор разрешения окна**: готовые пресеты (1280×720, 1366×768, 1440×900, 1600×900, 1920×1080), поля для ввода своей ширины/высоты и галочка **«Авто-определение разрешения»**.
+- 🔑 **Уникальный код курсора**: кнопка «Создать уникальный код» генерирует код вида `CUR2-<base64>-<checksum>`. Один код — много пользователей! Скопируй и поделись.
+- 📥 **Загрузка по коду**: вставь чужой код в поле и нажми «Загрузить по коду» — курсор загрузится на сетку.
+- ✅ **Контрольная сумма** защищает от повреждённого кода.
+- 💾 Автосохранение прогресса в `localStorage` (при закрытии браузера рисунок не пропадёт).
+- 🟢 Индикатор статуса сервера.
+
+---
+
+## КАК ЗАПУСТИТЬ ПРОГРАММУ И ВКЛЮЧИТЬ КУРСОР
 
 Чтобы нарисованный курсор начал работать во всей системе Windows 10, нужно запустить два файла по очереди:
 
-ШАГ 1: ВКЛЮЧАЕМ СИСТЕМНЫЙ ДВИЖОК
-1. Нажмите ПРАВОЙ кнопкой мыши по файлу "server.ps1".
-2. В появившемся меню выберите пункт "Выполнить с помощью PowerShell" (или "Run with PowerShell").
-3. Появится синее или черное текстовое окно. Не закрывайте его! Это "мозг" программы, который меняет курсоры в самой Windows. Просто сверните его.
+### ШАГ 1: ВКЛЮЧАЕМ СИСТЕМНЫЙ ДВИЖОК
+1. Нажмите ПРАВОЙ кнопкой мыши по файлу **`server.ps1`**.
+2. В появившемся меню выберите пункт **«Выполнить с помощью PowerShell»** (или «Run with PowerShell»).
+3. Появится синее или чёрное текстовое окно. **Не закрывайте его!** Это «мозг» программы, который меняет курсоры в самой Windows. Просто сверните его.
 
-ШАГ 2: ОТКРЫВАЕМ РЕДАКТОР И РИСУЕМ
-1. Обычным двойным щелчком откройте файл "cursor_game.html". Он откроется в вашем браузере.
-2. Рисуйте любой узор на сетке или нажмите кнопку "Загрузить стрелку Win10", чтобы перекрасить готовую.
-3. Нажмите зеленую кнопку "✨ ПРИМЕНИТЬ ГЛОБАЛЬНО". Курсор мгновенно изменится на всем компьютере!
-4. Если захотите вернуть родную стрелку назад — нажмите кнопку "🖥️ Как в системе (По умолчанию)".
+### ШАГ 2: ОТКРЫВАЕМ РЕДАКТОР И РИСУЕМ
+1. Обычным двойным щелчком откройте файл **`cursor_editor_v2.html`**. Он откроется в вашем браузере.
+2. Рисуйте любой узор на сетке 32×32 или нажмите кнопку **«Загрузить стрелку Win10»**, чтобы перекрасить готовую.
+3. Нажмите зелёную кнопку **«✨ ПРИМЕНИТЬ ГЛОБАЛЬНО»** (или `Ctrl+S`). Курсор мгновенно изменится на всём компьютере!
+4. Если захотите вернуть родную стрелку назад — нажмите кнопку **«🖥️ Как в системе (По умолчанию)»** (или `Ctrl+R`).
 
---------------------------------------------------
-ЕСЛИ СИСТЕМА ПИШЕТ ОШИБКУ ИЛИ БЛОКИРУЕТ ЗАПУСК:
+---
+
+## ИНСТРУКЦИЯ ПО НОВЫМ ФУНКЦИЯМ V2.0
+
+### ↶ Назад / ↷ Вернуть
+- Кнопки в панели слева, блок «2. Цвет и инструменты».
+- Или горячие клавиши: `Ctrl+Z` — назад, `Ctrl+Y` — вернуть, `Ctrl+Shift+Z` — тоже вернуть.
+- История хранит до 100 последних действий.
+
+### 🖥️ Выбор разрешения
+- В блоке **«1. Разрешение окна»** выберите пресет из выпадающего списка.
+- Или введите свою ширину/высоту в поля и нажмите **«Применить разрешение»**.
+- Поставьте галочку **«Авто-определение разрешения»** — программа сама возьмёт разрешение вашего монитора и подстроится.
+- В шапке справа всегда показано текущее разрешение.
+
+### 🔑 Уникальный код курсора
+1. Нарисуйте курсор.
+2. Нажмите **«🔑 Создать уникальный код»** — в поле появится код вида `CUR2-eyJ...-abc123`.
+3. Нажмите **«Копировать»** и отправьте код другу.
+4. Друг вставляет код в поле и нажимает **«Загрузить по коду»** — у него появится ваш курсор.
+
+> Один код — много пользователей. Код содержит сам рисунок курсора (RLE + Base64) и контрольную сумму для защиты от повреждений.
+
+---
+
+## ЕСЛИ СИСТЕМА ПИШЕТ ОШИБКУ ИЛИ БЛОКИРУЕТ ЗАПУСК
+
 Windows иногда защищает файлы из интернета. Чтобы снять блокировку:
-1. Нажмите ПРАВОЙ кнопкой мыши по файлу "server.ps1" и выберите "Свойства".
-2. На самой первой вкладке ("Общие") посмотрите в самый низ. Если там есть надпись "Осторожно, этот файл получен с другого компьютера..." и галочка 
-"Разблокировать" — поставьте эту галочку.
-3. Нажмите кнопку "Применить", а затем "ОК". Теперь файл запустится без проблем!
+1. Нажмите ПРАВОЙ кнопкой мыши по файлу **`server.ps1`** и выберите **«Свойства»**.
+2. На самой первой вкладке (**«Общие»**) посмотрите в самый низ. Если там есть надпись **«Осторожно, этот файл получен с другого компьютера...»** и галочка **«Разблокировать»** — поставьте эту галочку.
+3. Нажмите кнопку **«Применить»**, а затем **«ОК»**. Теперь файл запустится без проблем!
 
-!!! ЕСЛИ ВАША ПРОГРАММА ЗАПУСТИЛАСЬ В БРАУЗЕРЕ НАЖМИТЕ F11 ЧТОБЫ ПЕРЕЙТИ В ПОЛНОЭКРАННЫЙ РЕЖИМ ДЛЯ ТОГО ЧТОБЫ БЫЛИ ВИДНЫ ВСЕ КНОПКИ ПРОГРАММЫ !!!
+> Если PowerShell всё равно ругается на политику выполнения, откройте PowerShell от имени администратора и выполните один раз:
+> ```powershell
+> Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+> ```
 
-(Интерфейс программы был создан для монитора с разрешением 1440x900)
+---
 
-ВНИМАНИЕ - Курсор нарисованный вами остаётся в системе даже ПОСЛЕ ВЫКЛЮЧЕНИЯ программы, если же вы хотите вернуть обычный курсор который у вас был
-до этого, просто нажмите в программе кнопку которая вернёт исходный курсор, не бойтесь.
+## ВАЖНЫЕ ЗАМЕЧАНИЯ
 
-Примечание - вирусов у вас от меня просто НЕ МОЖЕТ быть при скачивании данной програмки, ведь исходный код прямо перед вами, опытным в коде - быть не нужно
-скормите все файлы любой нейронке которая их прочитает, (особенно гугл) и он вам скажет что тут всё чисто.
+> **!!!** ЕСЛИ ВАША ПРОГРАММА ЗАПУСТИЛАСЬ В БРАУЗЕРЕ — НАЖМИТЕ **F11**, ЧТОБЫ ПЕРЕЙТИ В ПОЛНОЭКРАННЫЙ РЕЖИМ, ЧТОБЫ БЫЛИ ВИДНЫ ВСЕ КНОПКИ ПРОГРАММЫ **!!!**
+
+- Интерфейс программы оптимизирован под разрешение **1440×900**, но теперь вы можете выбрать любое разрешение через блок **«1. Разрешение окна»**.
+- **ВНИМАНИЕ** — Курсор, нарисованный вами, остаётся в системе даже **ПОСЛЕ ВЫКЛЮЧЕНИЯ программы**. Если вы хотите вернуть обычный курсор, который был у вас до этого, просто нажмите в программе кнопку **«🖥️ Как в системе (По умолчанию)»** (`Ctrl+R`). Не бойтесь.
+- **Примечание** — вирусов у вас от меня просто **НЕ МОЖЕТ** быть при скачивании данной программы, ведь исходный код прямо перед вами. Опытным в коде быть не нужно — скормите все файлы любой нейронке, которая их прочитает (особенно Google), и она вам скажет, что тут всё чисто.
+
+---
+
+## ГОРЯЧИЕ КЛАВИШИ (СВОДКА)
+
+| Клавиши | Действие |
+|---|---|
+| `Ctrl + Z` | Назад (Undo) |
+| `Ctrl + Y` | Вернуть (Redo) |
+| `Ctrl + Shift + Z` | Вернуть (Redo) |
+| `Ctrl + S` | Применить курсор глобально |
+| `Ctrl + R` | Сбросить к системному курсору |
+
+---
+
+## СОСТАВ ПРОЕКТА
+
+| Файл | Назначение |
+|---|---|
+| `server.ps1` | Локальный сервер, который меняет курсоры в Windows через WinAPI |
+| `cursor_editor_v2.html` | Редактор курсора V2.0 (сетка, undo/redo, код, разрешения) |
+| `README.md` | Эта инструкция |
+
+---
+
+ENGLISH LANGUAGE - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+PLEASE, EVEN IF YOU ARE LAZY, READ THIS INSTRUCTION TO THE END, THERE ARE MANY NUANCES HERE THAT YOU NEED TO KNOW BEFORE USING.
+
+## WHAT'S NEW IN V2.0
+
+- ↶ **Undo** and ↷ **Redo** buttons — cancel/repeat drawing actions.
+- ⌨️ **Hotkeys**: `Ctrl+Z` (undo), `Ctrl+Y` / `Ctrl+Shift+Z` (redo), `Ctrl+S` (apply globally), `Ctrl+R` (reset to system cursor).
+- 🖥️ **Window resolution selection**: presets (1280×720, 1366×768, 1440×900, 1600×900, 1920×1080), custom width/height fields, and **"Auto-detect resolution"** checkbox.
+- 🔑 **Unique cursor code**: the "Create unique code" button generates a code like `CUR2-<base64>-<checksum>`. One code — many users! Copy and share.
+- 📥 **Load by code**: paste someone else's code and press "Load by code" — the cursor loads onto the grid.
+- ✅ **Checksum** protects against corrupted codes.
+- 💾 Auto-save progress to `localStorage` (your drawing survives browser restart).
+- 🟢 Server status indicator.
+
+---
+
+## HOW TO RUN THE PROGRAM AND ENABLE THE CURSOR
+
+In order for the drawn cursor to start working throughout the entire Windows 10 system, you need to run two files one after another:
+
+### STEP 1: ENABLE THE SYSTEM ENGINE
+1. Right-click on the **`server.ps1`** file.
+2. In the menu that appears, select **"Run with PowerShell"**.
+3. A blue or black text window will appear. **Do not close it!** This is the "brain" of the program that changes cursors in Windows itself. Just minimize it.
+
+### STEP 2: OPEN THE EDITOR AND DRAW
+1. Open the **`cursor_editor_v2.html`** file with a regular double-click. It will open in your browser.
+2. Draw any pattern on the 32×32 grid or press the **"Load Win10 Arrow"** button to repaint a ready-made one.
+3. Press the green button **"✨ APPLY GLOBALLY"** (or `Ctrl+S`). The cursor will instantly change on the entire computer!
+4. If you want to return the native arrow back — press the button **"🖥️ As in system (Default)"** (or `Ctrl+R`).
+
+---
+
+## NEW V2.0 FEATURES GUIDE
+
+### ↶ Undo / ↷ Redo
+- Buttons in the left panel, block "2. Color and tools".
+- Or hotkeys: `Ctrl+Z` — undo, `Ctrl+Y` — redo, `Ctrl+Shift+Z` — redo as well.
+- History stores up to 100 last actions.
+
+### 🖥️ Resolution selection
+- In the **"1. Window resolution"** block, choose a preset from the dropdown.
+- Or enter your own width/height and press **"Apply resolution"**.
+- Check **"Auto-detect resolution"** — the program will take your monitor's resolution and adapt.
+- The current resolution is always shown in the top-right corner.
+
+### 🔑 Unique cursor code
+1. Draw a cursor.
+2. Press **"🔑 Create unique code"** — a code like `CUR2-eyJ...-abc123` appears in the field.
+3. Press **"Copy"** and send the code to a friend.
+4. The friend pastes the code and presses **"Load by code"** — your cursor appears on their grid.
+
+> One code — many users. The code contains the cursor drawing itself (RLE + Base64) plus a checksum for protection against corruption.
+
+---
+
+## IF THE SYSTEM WRITES AN ERROR OR BLOCKS THE RUN
+
+Windows sometimes protects files from the Internet. To remove the block:
+1. Right-click on the **`server.ps1`** file and select **"Properties"**.
+2. On the very first tab (**"General"**), look at the very bottom. If there is an inscription **"This file came from another computer and might be blocked to help protect this computer..."** and a checkbox **"Unblock"** — check this box.
+3. Click the **"Apply"** button and then **"OK"**. Now the file will run without problems!
+
+> If PowerShell still complains about execution policy, open PowerShell as administrator and run once:
+> ```powershell
+> Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+> ```
+
+---
+
+## IMPORTANT NOTES
+
+> **!!!** IF YOUR PROGRAM LAUNCHED IN THE BROWSER, PRESS **F11** TO GO INTO FULLSCREEN MODE SO THAT ALL BUTTONS OF THE PROGRAM ARE VISIBLE **!!!**
+
+- The program interface is optimized for **1440×900**, but now you can choose any resolution via the **"1. Window resolution"** block.
+- **ATTENTION** — The cursor drawn by you remains in the system even **AFTER CLOSING the program**. If you want to return the usual cursor that you had before, just press the button **"🖥️ As in system (Default)"** (`Ctrl+R`). Do not be afraid.
+- **Note** — you simply **CANNOT** have viruses from me when downloading this program, because the source code is right in front of you. You don't need to be experienced in code — feed all the files to any AI that reads them (especially Google) and it will tell you that everything is clean here.
+
+---
+
+## HOTKEYS (SUMMARY)
+
+| Keys | Action |
+|---|---|
+| `Ctrl + Z` | Undo |
+| `Ctrl + Y` | Redo |
+| `Ctrl + Shift + Z` | Redo |
+| `Ctrl + S` | Apply cursor globally |
+| `Ctrl + R` | Reset to system cursor |
+
+---
+
+## PROJECT FILES
+
+| File | Purpose |
+|---|---|
+| `server.ps1` | Local server that changes Windows cursors via WinAPI |
+| `cursor_editor_v2.html` | Cursor editor V2.0 (grid, undo/redo, code, resolutions) |
+| `README.md` | This instruction |
